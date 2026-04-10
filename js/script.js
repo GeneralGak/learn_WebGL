@@ -1,18 +1,8 @@
 
 // Global variable
-var graphicsLibrary = document.getElementById('graphicsLibrary').getContext('webgl', {
-                                                                                        antialias: false,
-                                                                                        alpha: false,
-                                                                                        depth: false,
-                                                                                        stencil: false
-                                                                                     }) || 
+var graphicsLibrary = document.getElementById('graphicsLibrary').getContext('webgl') || 
                       // Support Internet Explorer, Edge, Safari
-                      document.getElementById('graphicsLibrary').getContext('experimental-webgl', {
-                                                                                                    antialias: false,
-                                                                                                    alpha: false,
-                                                                                                    depth: false,
-                                                                                                    stencil: false
-                                                                                                  });
+                      document.getElementById('graphicsLibrary').getContext('experimental-webgl');
 
 function InitWebGL()
 {
