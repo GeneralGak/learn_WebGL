@@ -34,7 +34,7 @@
                              vec4(0.0, 1.0, 0.0, 0.0),
                              vec4(siY, 0.0, coY, 0.0),
                              vec4(0.0, 0.0, 0.0, 1.0));
-                             
+
             gl_Position = matY * matX * vec4(Pos, 1.0);
             vertexColor = Color;
         }
@@ -50,6 +50,7 @@
     <select id="shape" onchange="InitShaders();">
         <option selected>Triangle</option>
         <option>Quad</option>
+        <option>QuadBox</option>
     </select>
     <div id="ui">Generate UI for geometry here!</div>
     <script src="js/script.js" defer></script>

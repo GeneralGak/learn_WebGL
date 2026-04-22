@@ -206,6 +206,49 @@ function AddDynamicQuad(width, height)
              w, h, 0.0, 1.0, 1.0, 0.0);
 }
 
+function AddDynamicQuadBox(width, height, depth) 
+{
+    const w = width * 0.5;
+    const h = height * 0.5;
+    const d = depth * 0.5;
+
+    // Front
+    AddQuad(-w, h, d, 1.0, 0.0, 0.0,
+            -w,-h, d, 1.0, 0.0, 0.0,
+             w,-h, d, 1.0, 0.0, 0.0,
+             w, h, d, 1.0, 0.0, 0.0);
+
+    // Back
+    AddQuad( w, h, -d, 0.0, 1.0, 0.0,
+             w,-h, -d, 0.0, 1.0, 0.0,
+            -w,-h, -d, 0.0, 1.0, 0.0,
+            -w, h, -d, 0.0, 1.0, 0.0);
+
+    // Top
+    AddQuad(-w, h,-d, 0.0, 0.0, 1.0,
+            -w, h, d, 0.0, 0.0, 1.0,
+             w, h, d, 0.0, 0.0, 1.0,
+             w, h,-d, 0.0, 0.0, 1.0);
+
+    // Bottom
+    AddQuad(-w,-h, d, 0.0, 1.0, 1.0,
+            -w,-h,-d, 0.0, 1.0, 1.0,
+             w,-h,-d, 0.0, 1.0, 1.0,
+             w,-h, d, 0.0, 1.0, 1.0);
+
+    // Left
+    AddQuad(-w, h, d, 1.0, 0.5, 0.0,
+            -w, h,-d, 1.0, 0.5, 0.0,
+            -w,-h,-d, 1.0, 0.5, 0.0,
+            -w,-h, d, 1.0, 0.5, 0.0);
+    
+    // Right
+    AddQuad( w, h,-d, 0.5, 0.0, 0.5,
+             w, h, d, 0.5, 0.0, 0.5,
+             w,-h, d, 0.5, 0.0, 0.5,
+             w,-h,-d, 0.5, 0.0, 0.5);
+}
+
 function ClearVertices()
 {
     vertices.length = 0;
@@ -216,15 +259,19 @@ function CreateGeometryUI() {
     const width = widthElement ? widthElement.value : 1.0;
     const heightElement = document.getElementById('height');
     const height = heightElement ? heightElement.value : 1.0;
+    const depthElement = document.getElementById('depth');
+    const depth = depthElement ? depthElement.value : 1.0;
 
     document.getElementById('ui').innerHTML =
     'Width: <input type="number" id="width" value="'+ width +'"onchange= "InitShaders();"><br>' +
-    'Height: <input type="number" id="height" value="'+ height +'"onchange= "InitShaders();">';
+    'Height: <input type="number" id="height" value="'+ height +'"onchange= "InitShaders();"><br>' +
+    'Depth: <input type="number" id="depth" value="'+ depth +'"onchange= "InitShaders();">';
 
     let selecter = document.getElementById('shape');
     switch (selecter.selectedIndex) {
         case 0: AddDynamicTriangle(width, height); break;
         case 1: AddDynamicQuad(width, height); break;
+        case 2: AddDynamicQuadBox(width, height, depth); break;
     }
 }
 
