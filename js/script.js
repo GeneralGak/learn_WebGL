@@ -249,6 +249,33 @@ function AddDynamicQuadBox(width, height, depth)
              w,-h,-d, 0.5, 0.0, 0.5);
 }
 
+function AddDynamicTriangleBox(width, height, depth)
+{
+    const w = width * 0.5;
+    const h = height * 0.5;
+    const d = depth * 0.5;
+
+    // Front
+    AddTriangle(0.0, h, 0.0, 1.0, 0.0, 0.0,
+                -w, -h,  d,  1.0, 0.0, 0.0,
+                 w, -h,  d,  1.0, 0.0, 0.0);
+
+    // Left/Back
+    AddTriangle(0.0, h, 0.0, 0.0, 1.0, 0.0,
+                0.0,-h, -d,  0.0, 1.0, 0.0,
+                -w, -h,  d,  0.0, 1.0, 0.0);
+
+    // Right/Back
+    AddTriangle(0.0, h, 0.0, 0.0, 0.0, 1.0,
+                 w, -h,  d,  0.0, 0.0, 1.0,
+                0.0,-h, -d,  0.0, 0.0, 1.0);
+
+    // Bottom
+    AddTriangle( w,-h, d, 0.0, 1.0, 1.0,
+                -w,-h, d, 0.0, 1.0, 1.0,
+                0.0,-h,-d, 0.0, 1.0, 1.0);
+}
+
 function ClearVertices()
 {
     vertices.length = 0;
@@ -272,6 +299,7 @@ function CreateGeometryUI() {
         case 0: AddDynamicTriangle(width, height); break;
         case 1: AddDynamicQuad(width, height); break;
         case 2: AddDynamicQuadBox(width, height, depth); break;
+        case 3: AddDynamicTriangleBox(width, height, depth); break;
     }
 }
 
