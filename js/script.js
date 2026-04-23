@@ -276,6 +276,74 @@ function AddDynamicTriangleBox(width, height, depth)
                 0.0,-h,-d, 0.0, 1.0, 1.0);
 }
 
+function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, divideZ) 
+{
+    divideX = Math.max(1, divideX);
+    divideY = Math.max(1, divideY);
+    divideZ = Math.max(1, divideZ);
+    divideX = Math.round(divideX);
+    divideY = Math.round(divideY);
+    divideZ = Math.round(divideZ);
+
+    const w = width * 0.5;
+    const h = height * 0.5;
+    const d = depth * 0.5;
+    const stepZ = depth / divideZ;
+    const stepY = height / divideY;
+    const stepX = width / divideX;
+
+    for (let i = 0; i < divideY; i++)
+    {
+        let divH = -h + (stepY * (i + 1));
+        for (let j = 0; j < divideX; j++)
+        {
+            let setBlackXY = (i + j) % 2 == 0;
+            let divW = -w + (stepX * (j + 1));
+            // Front
+            AddQuad(divW - stepX, divH,         d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0,
+                    divW - stepX, divH - stepY, d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0,
+                    divW,         divH - stepY, d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0,
+                    divW,         divH,         d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0);
+
+            // Back
+            AddQuad(divW,         divH,         -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0,
+                    divW,         divH - stepY, -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0,
+                    divW - stepX, divH - stepY, -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0,
+                    divW - stepX, divH,         -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0);
+
+            for (let q = 0; q < divideZ; q++)
+            {
+                let setBlackYZ = (i + q) % 2 == 0;
+                let setBlackXZ = (j + q) % 2 == 0;
+                let divD = -d + (stepZ * (q + 1));
+                // Left
+                AddQuad(-w, divH,         divD,         (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0,
+                        -w, divH,         divD - stepZ, (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0,
+                        -w, divH - stepY, divD - stepZ, (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0,
+                        -w, divH - stepY, divD,         (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0);
+
+                // Right   
+                AddQuad(w, divH,         divD - stepZ,  (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0),
+                        w, divH,         divD,          (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0),
+                        w, divH - stepY, divD,          (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0),
+                        w, divH - stepY, divD - stepZ,  (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0)); 
+
+                // Top
+                AddQuad(divW - stepX, h, divD - stepZ,  0.0, 0.0, (setBlackXZ ? 1.0 : 0.0),
+                        divW - stepX, h, divD,          0.0, 0.0, (setBlackXZ ? 1.0 : 0.0),
+                        divW,         h, divD,          0.0, 0.0, (setBlackXZ ? 1.0 : 0.0),
+                        divW,         h, divD - stepZ,  0.0, 0.0, (setBlackXZ ? 1.0 : 0.0));
+
+                // Bottom
+                AddQuad(divW - stepX, -h, divD,          0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0),
+                        divW - stepX, -h, divD - stepZ,  0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0),
+                        divW,         -h, divD - stepZ,  0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0),
+                        divW,         -h, divD,          0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0));
+            }
+        }
+    }
+}
+
 function ClearVertices()
 {
     vertices.length = 0;
@@ -288,11 +356,20 @@ function CreateGeometryUI() {
     const height = heightElement ? heightElement.value : 1.0;
     const depthElement = document.getElementById('depth');
     const depth = depthElement ? depthElement.value : 1.0;
+    const divideXElement = document.getElementById('divideX');
+    const divideX = divideXElement ? divideXElement.value : 1.0;
+    const divideYElement = document.getElementById('divideY');
+    const divideY = divideYElement ? divideYElement.value : 1.0;
+    const divideZElement = document.getElementById('divideZ');
+    const divideZ = divideZElement ? divideZElement.value : 1.0;
 
     document.getElementById('ui').innerHTML =
     'Width: <input type="number" id="width" value="'+ width +'"onchange= "InitShaders();"><br>' +
     'Height: <input type="number" id="height" value="'+ height +'"onchange= "InitShaders();"><br>' +
-    'Depth: <input type="number" id="depth" value="'+ depth +'"onchange= "InitShaders();">';
+    'Depth: <input type="number" id="depth" value="'+ depth +'"onchange= "InitShaders();"><br>' +
+    'DivideX: <input type="number" id="divideX" value="'+ divideX +'"onchange= "InitShaders();"><br>' +
+    'DivideY: <input type="number" id="divideY" value="'+ divideY +'"onchange= "InitShaders();"><br>' +
+    'DivideZ: <input type="number" id="divideZ" value="'+ divideZ +'"onchange= "InitShaders();"><br>';
 
     let selecter = document.getElementById('shape');
     switch (selecter.selectedIndex) {
@@ -300,6 +377,7 @@ function CreateGeometryUI() {
         case 1: AddDynamicQuad(width, height); break;
         case 2: AddDynamicQuadBox(width, height, depth); break;
         case 3: AddDynamicTriangleBox(width, height, depth); break;
+        case 4: AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, divideZ); break;
     }
 }
 
