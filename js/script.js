@@ -9,7 +9,12 @@ var graphicsLibrary = document.getElementById('graphicsLibrary').getContext('web
 var mouseX = 0 
 var mouseY = 0;
 var angle = [ 0.0, 0.0, 0.0, 1.0 ];
-var angleGL = 0;
+var angleUniformLocation = 0;
+
+var textureUniformLocation = 0;
+var display = [ 0.0, 0.0, 0.0, 0.0 ];
+var displayUniformLocation = 0;
+
 
 
 document.getElementById('graphicsLibrary').addEventListener(
@@ -20,7 +25,7 @@ document.getElementById('graphicsLibrary').addEventListener(
             angle[0] -= (mouseY - moveEvent.y) * 0.01;
             angle[1] += (mouseX - moveEvent.x) * 0.01;
 
-            graphicsLibrary.uniform4fv(angleGL, new Float32Array(angle));
+            graphicsLibrary.uniform4fv(angleUniformLocation, new Float32Array(angle));
             Render();
         }
         mouseX = moveEvent.x;
@@ -300,16 +305,18 @@ function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, di
             let setBlackXY = (i + j) % 2 == 0;
             let divW = -w + (stepX * (j + 1));
             // Front
-            AddQuad(divW - stepX, divH,         d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0,
-                    divW - stepX, divH - stepY, d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0,
-                    divW,         divH - stepY, d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0,
-                    divW,         divH,         d, (setBlackXY ? 1.0 : 0.0), 0.0, 0.0);
+            let sideColor1 = (setBlackXY ? 1.0 : 0.0);
+            let sideColor2 = (setBlackXY ? 0.5 : 0.0);
+            AddQuad(divW - stepX, divH,         d, sideColor1, 0.0, 0.0,
+                    divW - stepX, divH - stepY, d, sideColor1, 0.0, 0.0,
+                    divW,         divH - stepY, d, sideColor1, 0.0, 0.0,
+                    divW,         divH,         d, sideColor1, 0.0, 0.0);
 
             // Back
-            AddQuad(divW,         divH,         -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0,
-                    divW,         divH - stepY, -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0,
-                    divW - stepX, divH - stepY, -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0,
-                    divW - stepX, divH,         -d, 0.0, (setBlackXY ? 1.0 : 0.0), 0.0);
+            AddQuad(divW,         divH,         -d, 0.0, sideColor1, 0.0,
+                    divW,         divH - stepY, -d, 0.0, sideColor1, 0.0,
+                    divW - stepX, divH - stepY, -d, 0.0, sideColor1, 0.0,
+                    divW - stepX, divH,         -d, 0.0, sideColor1, 0.0);
 
             for (let q = 0; q < divideZ; q++)
             {
@@ -317,28 +324,31 @@ function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, di
                 let setBlackXZ = (j + q) % 2 == 0;
                 let divD = -d + (stepZ * (q + 1));
                 // Left
-                AddQuad(-w, divH,         divD,         (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0,
-                        -w, divH,         divD - stepZ, (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0,
-                        -w, divH - stepY, divD - stepZ, (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0,
-                        -w, divH - stepY, divD,         (setBlackYZ ? 1.0 : 0.0), (setBlackYZ ? 0.5 : 0.0), 0.0);
+                sideColor1 = (setBlackYZ ? 1.0 : 0.0);
+                sideColor2 = (setBlackYZ ? 0.5 : 0.0);
+                AddQuad(-w, divH,         divD,         sideColor1, sideColor2, 0.0,
+                        -w, divH,         divD - stepZ, sideColor1, sideColor2, 0.0,
+                        -w, divH - stepY, divD - stepZ, sideColor1, sideColor2, 0.0,
+                        -w, divH - stepY, divD,         sideColor1, sideColor2, 0.0);
 
                 // Right   
-                AddQuad(w, divH,         divD - stepZ,  (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0),
-                        w, divH,         divD,          (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0),
-                        w, divH - stepY, divD,          (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0),
-                        w, divH - stepY, divD - stepZ,  (setBlackYZ ? 0.5 : 0.0), 0.0, (setBlackYZ ? 0.5 : 0.0)); 
+                AddQuad(w, divH,         divD - stepZ,  sideColor2, 0.0, sideColor2,
+                        w, divH,         divD,          sideColor2, 0.0, sideColor2,
+                        w, divH - stepY, divD,          sideColor2, 0.0, sideColor2,
+                        w, divH - stepY, divD - stepZ,  sideColor2, 0.0, sideColor2); 
 
                 // Top
-                AddQuad(divW - stepX, h, divD - stepZ,  0.0, 0.0, (setBlackXZ ? 1.0 : 0.0),
-                        divW - stepX, h, divD,          0.0, 0.0, (setBlackXZ ? 1.0 : 0.0),
-                        divW,         h, divD,          0.0, 0.0, (setBlackXZ ? 1.0 : 0.0),
-                        divW,         h, divD - stepZ,  0.0, 0.0, (setBlackXZ ? 1.0 : 0.0));
+                sideColor1 = (setBlackXZ ? 1.0 : 0.0);
+                AddQuad(divW - stepX, h, divD - stepZ,  0.0, 0.0, sideColor1,
+                        divW - stepX, h, divD,          0.0, 0.0, sideColor1,
+                        divW,         h, divD,          0.0, 0.0, sideColor1,
+                        divW,         h, divD - stepZ,  0.0, 0.0, sideColor1);
 
                 // Bottom
-                AddQuad(divW - stepX, -h, divD,          0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0),
-                        divW - stepX, -h, divD - stepZ,  0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0),
-                        divW,         -h, divD - stepZ,  0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0),
-                        divW,         -h, divD,          0.0, (setBlackXZ ? 1.0 : 0.0), (setBlackXZ ? 1.0 : 0.0));
+                AddQuad(divW - stepX, -h, divD,          0.0, sideColor1, sideColor1,
+                        divW - stepX, -h, divD - stepZ,  0.0, sideColor1, sideColor1,
+                        divW,         -h, divD - stepZ,  0.0, sideColor1, sideColor1,
+                        divW,         -h, divD,          0.0, sideColor1, sideColor1);
             }
         }
     }
@@ -347,6 +357,79 @@ function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, di
 function ClearVertices()
 {
     vertices.length = 0;
+}
+
+function CreateTexture(program, url)
+{
+    // Load texture to graphics card
+    const texture = LoadTexture(url);
+
+    // Flip y axis so it fits OpenGL standard
+    graphicsLibrary.pixelStorei(graphicsLibrary.UNPACK_FLIP_Y_WEBGL, true);
+
+    // Activate texture to texture unit 0
+    graphicsLibrary.activeTexture(graphicsLibrary.TEXTURE0);
+    graphicsLibrary.bindTexture(graphicsLibrary.TEXTURE_2D, texture);
+
+    // Add uniform location to fragment shader
+    textureUniformLocation = graphicsLibrary.getUniformLocation(program, 'Texture');
+
+    // Add uniform location to fragment shader
+    displayUniformLocation = graphicsLibrary.getUniformLocation(program, 'Display');
+}
+
+function LoadTexture(url) {
+    // Get reference to memory location where texture data is saved
+    const texture = graphicsLibrary.createTexture();
+
+    // Call this before running any texture code, 
+    // in order for the data to be send to previous memory location
+    graphicsLibrary.bindTexture(graphicsLibrary.TEXTURE_2D, texture);
+
+    // Create a blue image to be displayed until texture is loaded
+    const pixel = new Uint8Array([0, 0, 255, 255]);
+    graphicsLibrary.texImage2D(graphicsLibrary.TEXTURE_2D, 0, graphicsLibrary.RGBA, 1, 1, 0,
+                               graphicsLibrary.RGBA, graphicsLibrary.UNSIGNED_BYTE, pixel);
+
+    // Instantiate new image and replace blue image when download is finished
+    const image = new Image();
+    image.onload = () => {
+        graphicsLibrary.bindTexture(graphicsLibrary.TEXTURE_2D, texture);
+        graphicsLibrary.texImage2D(graphicsLibrary.TEXTURE_2D, 0, graphicsLibrary.RGBA,
+                                   graphicsLibrary.RGBA, graphicsLibrary.UNSIGNED_BYTE, image);
+        SetTextureFilters(image);
+    };
+
+    // Start image download here
+    image.src = url;
+
+    return texture;
+}
+
+function SetTextureFilters(image)
+{
+    // Check if image width and height i equal to the power of 2
+    if (IsPow2(image.width) && IsPow2(image.height))
+    {
+        gl.generateMipmap(gl.TEXTURE_2D);
+    }
+    else
+    {
+        // Create a texture filter without mipmap
+
+        // Set texture area to repeat the last pixel on the U and V axes to fill out the texture map
+        gl.texParameteri(gl.TEXTURE_2D,
+        gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D,
+        gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D,
+        gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    }
+}
+
+function IsPow2(value)
+{
+    return (value & (value - 1)) === 0;
 }
 
 function CreateGeometryUI() {
@@ -396,7 +479,7 @@ function CreateGeometryBuffers(shaderProgram)
     CreateVBO(shaderProgram, new Float32Array(vertices));
 
     // Get shader uniform: Angle
-    angleGL = graphicsLibrary.getUniformLocation(shaderProgram, 'Angle');
+    angleUniformLocation = graphicsLibrary.getUniformLocation(shaderProgram, 'Angle');
 
     // Activate shader program
     graphicsLibrary.useProgram(shaderProgram);
