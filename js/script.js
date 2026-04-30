@@ -157,58 +157,63 @@ function ValidateShaderProgram(shaderProgram)
     return true;
 }
 
-function AddVertex(x, y, z, r, g, b)
+function AddVertex(x, y, z, r, g, b, u, v, nx, ny, nz)
 {
     const index = vertices.length;
-    vertices.length += 6;
+    vertices.length += 11;
     vertices[index + 0] = x;
     vertices[index + 1] = y;
     vertices[index + 2] = z;
     vertices[index + 3] = r;
     vertices[index + 4] = g;
     vertices[index + 5] = b;
+    vertices[index + 6] = u;
+    vertices[index + 7] = v;
+    vertices[index + 8] = nx;
+    vertices[index + 9] = ny;
+    vertices[index + 10] = nz;
 }
 
-function AddTriangle(x1, y1, z1, r1, g1, b1,
-                     x2, y2, z2, r2, g2, b2,
-                     x3, y3, z3, r3, g3, b3)
+function AddTriangle(x1, y1, z1, r1, g1, b1, u1, v1, n1x, n1y, n1z,
+                     x2, y2, z2, r2, g2, b2, u2, v2, n2x, n2y, n2z,
+                     x3, y3, z3, r3, g3, b3, u3, v3, n3x, n3y, n3z)
 {
-    AddVertex(x1, y1, z1, r1, g1, b1);
-    AddVertex(x2, y2, z2, r2, g2, b2);
-    AddVertex(x3, y3, z3, r3, g3, b3);
+    AddVertex(x1, y1, z1, r1, g1, b1, u1, v1, n1x, n1y, n1z);
+    AddVertex(x2, y2, z2, r2, g2, b2, u2, v2, n2x, n2y, n2z);
+    AddVertex(x3, y3, z3, r3, g3, b3, u3, v3, n3x, n3y, n3z);
 }
 
-function AddQuad(x1, y1, z1, r1, g1, b1,
-                 x2, y2, z2, r2, g2, b2,
-                 x3, y3, z3, r3, g3, b3,
-                 x4, y4, z4, r4, g4, b4)
+function AddQuad(x1, y1, z1, r1, g1, b1, u1, v1, n1x, n1y, n1z,
+                 x2, y2, z2, r2, g2, b2, u2, v2, n2x, n2y, n2z,
+                 x3, y3, z3, r3, g3, b3, u3, v3, n3x, n3y, n3z,
+                 x4, y4, z4, r4, g4, b4, u4, v4, n4x, n4y, n4z)
 {
-    AddTriangle(x1, y1, z1, r1, g1, b1,
-                x2, y2, z2, r2, g2, b2,
-                x3, y3, z3, r3, g3, b3);
+    AddTriangle(x1, y1, z1, r1, g1, b1, u1, v1, n1x, n1y, n1z,
+                x2, y2, z2, r2, g2, b2, u2, v2, n2x, n2y, n2z,
+                x3, y3, z3, r3, g3, b3, u3, v3, n3x, n3y, n3z);
 
-    AddTriangle(x3, y3, z3, r3, g3, b3,
-                x4, y4, z4, r4, g4, b4,
-                x1, y1, z1, r1, g1, b1);
+    AddTriangle(x3, y3, z3, r3, g3, b3, u3, v3, n3x, n3y, n3z,
+                x4, y4, z4, r4, g4, b4, u4, v4, n4x, n4y, n4z,
+                x1, y1, z1, r1, g1, b1, u1, v1, n1x, n1y, n1z);
 }
 
 function AddDynamicTriangle(width, height)
 {
     const w = width * 0.5;
     const h = height * 0.5;
-    AddTriangle(0.0, h, 0.0, 1.0, 0.0, 0.0,
-                -w, -h, 0.0, 0.0, 1.0, 0.0,
-                 w, -h, 0.0, 0.0, 0.0, 1.0);
+    AddTriangle(0.0, h, 0.0, 1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 0.0, 1.0,
+                -w, -h, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+                 w, -h, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0);
 }
 
-function AddDynamicQuad(width, height)
+function AddDynamicQuad(width, height) 
 {
     const w = width * 0.5;
     const h = height * 0.5;
-    AddQuad(-w, h, 0.0, 1.0, 0.0, 0.0,
-            -w,-h, 0.0, 0.0, 1.0, 0.0,
-             w,-h, 0.0, 0.0, 0.0, 1.0,
-             w, h, 0.0, 1.0, 1.0, 0.0);
+    AddQuad(-w, h, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            -w,-h, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+             w,-h, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+             w, h, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
 }
 
 function AddDynamicQuadBox(width, height, depth) 
@@ -218,40 +223,40 @@ function AddDynamicQuadBox(width, height, depth)
     const d = depth * 0.5;
 
     // Front
-    AddQuad(-w, h, d, 1.0, 0.0, 0.0,
-            -w,-h, d, 1.0, 0.0, 0.0,
-             w,-h, d, 1.0, 0.0, 0.0,
-             w, h, d, 1.0, 0.0, 0.0);
+    AddQuad(-w, h, d, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            -w,-h, d, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+             w,-h, d, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+             w, h, d, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
 
     // Back
-    AddQuad( w, h, -d, 0.0, 1.0, 0.0,
-             w,-h, -d, 0.0, 1.0, 0.0,
-            -w,-h, -d, 0.0, 1.0, 0.0,
-            -w, h, -d, 0.0, 1.0, 0.0);
+    AddQuad( w, h, -d, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0,
+             w,-h, -d, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0,
+            -w,-h, -d, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0,
+            -w, h, -d, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0, -1.0);
 
     // Top
-    AddQuad(-w, h,-d, 0.0, 0.0, 1.0,
-            -w, h, d, 0.0, 0.0, 1.0,
-             w, h, d, 0.0, 0.0, 1.0,
-             w, h,-d, 0.0, 0.0, 1.0);
+    AddQuad(-w, h,-d, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            -w, h, d, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+             w, h, d, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+             w, h,-d, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
 
     // Bottom
-    AddQuad(-w,-h, d, 0.0, 1.0, 1.0,
-            -w,-h,-d, 0.0, 1.0, 1.0,
-             w,-h,-d, 0.0, 1.0, 1.0,
-             w,-h, d, 0.0, 1.0, 1.0);
+    AddQuad(-w,-h, d, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0,
+            -w,-h,-d, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0,
+             w,-h,-d, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, -1.0, 0.0,
+             w,-h, d, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0, 0.0);
 
     // Left
-    AddQuad(-w, h, d, 1.0, 0.5, 0.0,
-            -w, h,-d, 1.0, 0.5, 0.0,
-            -w,-h,-d, 1.0, 0.5, 0.0,
-            -w,-h, d, 1.0, 0.5, 0.0);
+    AddQuad(-w, h, d, 1.0, 0.5, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0,
+            -w, h,-d, 1.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0,
+            -w,-h,-d, 1.0, 0.5, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0,
+            -w,-h, d, 1.0, 0.5, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0);
     
     // Right
-    AddQuad( w, h,-d, 0.5, 0.0, 0.5,
-             w, h, d, 0.5, 0.0, 0.5,
-             w,-h, d, 0.5, 0.0, 0.5,
-             w,-h,-d, 0.5, 0.0, 0.5);
+    AddQuad( w, h,-d, 0.5, 0.0, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0,
+             w, h, d, 0.5, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
+             w,-h, d, 0.5, 0.0, 0.5, 1.0, 0.0, 1.0, 0.0, 0.0,
+             w,-h,-d, 0.5, 0.0, 0.5, 1.0, 1.0, 1.0, 0.0, 0.0);
 }
 
 function AddDynamicTriangleBox(width, height, depth)
@@ -261,24 +266,23 @@ function AddDynamicTriangleBox(width, height, depth)
     const d = depth * 0.5;
 
     // Front
-    AddTriangle(0.0, h, 0.0, 1.0, 0.0, 0.0,
-                -w, -h,  d,  1.0, 0.0, 0.0,
-                 w, -h,  d,  1.0, 0.0, 0.0);
+    AddTriangle(0.0, h, 0.0, 1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 1.0, 0.0,
+                -w, -h,  d,  1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+                 w, -h,  d,  1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
 
     // Left/Back
-    AddTriangle(0.0, h, 0.0, 0.0, 1.0, 0.0,
-                0.0,-h, -d,  0.0, 1.0, 0.0,
-                -w, -h,  d,  0.0, 1.0, 0.0);
+    AddTriangle(0.0, h, 0.0, 0.0, 1.0, 0.0, 0.5, 1.0,  0.0, 1.0,  0.0,
+                0.0,-h, -d,  0.0, 1.0, 0.0, 0.0, 0.0,  0.0, 0.0, -1.0,
+                -w, -h,  d,  0.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0,  0.0);
 
     // Right/Back
-    AddTriangle(0.0, h, 0.0, 0.0, 0.0, 1.0,
-                 w, -h,  d,  0.0, 0.0, 1.0,
-                0.0,-h, -d,  0.0, 0.0, 1.0);
-
+    AddTriangle(0.0, h, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0, 0.0, 1.0,  0.0,
+                 w, -h,  d,  0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,  0.0,
+                0.0,-h, -d,  0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0);
     // Bottom
-    AddTriangle( w,-h, d, 0.0, 1.0, 1.0,
-                -w,-h, d, 0.0, 1.0, 1.0,
-                0.0,-h,-d, 0.0, 1.0, 1.0);
+    AddTriangle( w, -h, d, 0.0, 1.0, 1.0, 0.5, 1.0, 0.0, -1.0, 0.0,
+                -w, -h, d, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0,
+                0.0,-h,-d, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, -1.0, 0.0);
 }
 
 function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, divideZ) 
@@ -307,16 +311,16 @@ function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, di
             // Front
             let sideColor1 = (setBlackXY ? 1.0 : 0.0);
             let sideColor2 = (setBlackXY ? 0.5 : 0.0);
-            AddQuad(divW - stepX, divH,         d, sideColor1, 0.0, 0.0,
-                    divW - stepX, divH - stepY, d, sideColor1, 0.0, 0.0,
-                    divW,         divH - stepY, d, sideColor1, 0.0, 0.0,
-                    divW,         divH,         d, sideColor1, 0.0, 0.0);
+            AddQuad(divW - stepX, divH,         d, sideColor1, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                    divW - stepX, divH - stepY, d, sideColor1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+                    divW,         divH - stepY, d, sideColor1, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+                    divW,         divH,         d, sideColor1, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
 
             // Back
-            AddQuad(divW,         divH,         -d, 0.0, sideColor1, 0.0,
-                    divW,         divH - stepY, -d, 0.0, sideColor1, 0.0,
-                    divW - stepX, divH - stepY, -d, 0.0, sideColor1, 0.0,
-                    divW - stepX, divH,         -d, 0.0, sideColor1, 0.0);
+            AddQuad(divW,         divH,         -d, 0.0, sideColor1, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                    divW,         divH - stepY, -d, 0.0, sideColor1, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+                    divW - stepX, divH - stepY, -d, 0.0, sideColor1, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+                    divW - stepX, divH,         -d, 0.0, sideColor1, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
 
             for (let q = 0; q < divideZ; q++)
             {
@@ -326,29 +330,29 @@ function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, di
                 // Left
                 sideColor1 = (setBlackYZ ? 1.0 : 0.0);
                 sideColor2 = (setBlackYZ ? 0.5 : 0.0);
-                AddQuad(-w, divH,         divD,         sideColor1, sideColor2, 0.0,
-                        -w, divH,         divD - stepZ, sideColor1, sideColor2, 0.0,
-                        -w, divH - stepY, divD - stepZ, sideColor1, sideColor2, 0.0,
-                        -w, divH - stepY, divD,         sideColor1, sideColor2, 0.0);
+                AddQuad(-w, divH,         divD,         sideColor1, sideColor2, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                        -w, divH,         divD - stepZ, sideColor1, sideColor2, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+                        -w, divH - stepY, divD - stepZ, sideColor1, sideColor2, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
+                        -w, divH - stepY, divD,         sideColor1, sideColor2, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
 
                 // Right   
-                AddQuad(w, divH,         divD - stepZ,  sideColor2, 0.0, sideColor2,
-                        w, divH,         divD,          sideColor2, 0.0, sideColor2,
-                        w, divH - stepY, divD,          sideColor2, 0.0, sideColor2,
-                        w, divH - stepY, divD - stepZ,  sideColor2, 0.0, sideColor2); 
+                AddQuad(w, divH,         divD - stepZ,  sideColor2, 0.0, sideColor2, 0.0, 1.0, 0.0, 0.0, 1.0,
+                        w, divH,         divD,          sideColor2, 0.0, sideColor2, 0.0, 0.0, 0.0, 0.0, 1.0,
+                        w, divH - stepY, divD,          sideColor2, 0.0, sideColor2, 1.0, 0.0, 0.0, 0.0, 1.0,
+                        w, divH - stepY, divD - stepZ,  sideColor2, 0.0, sideColor2, 1.0, 1.0, 0.0, 0.0, 1.0); 
 
                 // Top
                 sideColor1 = (setBlackXZ ? 1.0 : 0.0);
-                AddQuad(divW - stepX, h, divD - stepZ,  0.0, 0.0, sideColor1,
-                        divW - stepX, h, divD,          0.0, 0.0, sideColor1,
-                        divW,         h, divD,          0.0, 0.0, sideColor1,
-                        divW,         h, divD - stepZ,  0.0, 0.0, sideColor1);
+                AddQuad(divW - stepX, h, divD - stepZ,  0.0, 0.0, sideColor1, 0.0, 1.0, 0.0, 0.0, 1.0,
+                        divW - stepX, h, divD,          0.0, 0.0, sideColor1, 0.0, 0.0, 0.0, 0.0, 1.0,
+                        divW,         h, divD,          0.0, 0.0, sideColor1, 1.0, 0.0, 0.0, 0.0, 1.0,
+                        divW,         h, divD - stepZ,  0.0, 0.0, sideColor1, 1.0, 1.0, 0.0, 0.0, 1.0);
 
                 // Bottom
-                AddQuad(divW - stepX, -h, divD,          0.0, sideColor1, sideColor1,
-                        divW - stepX, -h, divD - stepZ,  0.0, sideColor1, sideColor1,
-                        divW,         -h, divD - stepZ,  0.0, sideColor1, sideColor1,
-                        divW,         -h, divD,          0.0, sideColor1, sideColor1);
+                AddQuad(divW - stepX, -h, divD,          0.0, sideColor1, sideColor1, 0.0, 1.0, 0.0, 0.0, 1.0,
+                        divW - stepX, -h, divD - stepZ,  0.0, sideColor1, sideColor1, 0.0, 0.0, 0.0, 0.0, 1.0,
+                        divW,         -h, divD - stepZ,  0.0, sideColor1, sideColor1, 1.0, 0.0, 0.0, 0.0, 1.0,
+                        divW,         -h, divD,          0.0, sideColor1, sideColor1, 1.0, 1.0, 0.0, 0.0, 1.0);
             }
         }
     }
@@ -411,19 +415,19 @@ function SetTextureFilters(image)
     // Check if image width and height i equal to the power of 2
     if (IsPow2(image.width) && IsPow2(image.height))
     {
-        gl.generateMipmap(gl.TEXTURE_2D);
+        graphicsLibrary.generateMipmap(graphicsLibrary.TEXTURE_2D);
     }
     else
     {
         // Create a texture filter without mipmap
 
         // Set texture area to repeat the last pixel on the U and V axes to fill out the texture map
-        gl.texParameteri(gl.TEXTURE_2D,
-        gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D,
-        gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D,
-        gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        graphicsLibrary.texParameteri(graphicsLibrary.TEXTURE_2D,
+        graphicsLibrary.TEXTURE_WRAP_S, graphicsLibrary.CLAMP_TO_EDGE);
+        graphicsLibrary.texParameteri(graphicsLibrary.TEXTURE_2D,
+        graphicsLibrary.TEXTURE_WRAP_T, graphicsLibrary.CLAMP_TO_EDGE);
+        graphicsLibrary.texParameteri(graphicsLibrary.TEXTURE_2D,
+        graphicsLibrary.TEXTURE_MIN_FILTER, graphicsLibrary.LINEAR);
     }
 }
 
@@ -464,6 +468,44 @@ function CreateGeometryUI() {
     }
 }
 
+function CreateVBO(ShaderProgram, vertices)
+{
+    let virtualBufferObject = graphicsLibrary.createBuffer();
+    graphicsLibrary.bindBuffer(graphicsLibrary.ARRAY_BUFFER, virtualBufferObject);
+    graphicsLibrary.bufferData(graphicsLibrary.ARRAY_BUFFER, vertices, graphicsLibrary.STATIC_DRAW);
+    const vertexPoints = 11 * Float32Array.BYTES_PER_ELEMENT;
+
+    // Create shader attribute: Pos
+    let position = graphicsLibrary.getAttribLocation(ShaderProgram, 'Pos');
+    graphicsLibrary.vertexAttribPointer(position, 3, graphicsLibrary.FLOAT, graphicsLibrary.FALSE, vertexPoints, 0);
+    graphicsLibrary.enableVertexAttribArray(position);
+
+    // Create shader attribute: Color
+    const offset = 3 * Float32Array.BYTES_PER_ELEMENT;
+    let color = graphicsLibrary.getAttribLocation(ShaderProgram, 'Color');
+    graphicsLibrary.vertexAttribPointer(color, 3, graphicsLibrary.FLOAT, graphicsLibrary.FALSE, vertexPoints, offset);
+    graphicsLibrary.enableVertexAttribArray(color);
+
+    // Create shader attribute: UV
+    const offset2 = offset * 2;
+    let uv = graphicsLibrary.getAttribLocation(ShaderProgram, 'UV');
+    graphicsLibrary.vertexAttribPointer(uv, 2, graphicsLibrary.FLOAT, graphicsLibrary.FALSE, vertexPoints, offset2);
+    graphicsLibrary.enableVertexAttribArray(uv);
+
+    // Create shader attribute: Normal
+    const offset3 = offset + 5 * Float32Array.BYTES_PER_ELEMENT;
+    let normal = graphicsLibrary.getAttribLocation(ShaderProgram, 'Normal');
+    graphicsLibrary.vertexAttribPointer(normal, 3, graphicsLibrary.FLOAT, graphicsLibrary.FALSE, vertexPoints, offset3);
+    graphicsLibrary.enableVertexAttribArray(normal);
+}
+
+function Render()
+{
+    graphicsLibrary.clearColor(0.0, 0.4, 0.6, 1.0);
+    graphicsLibrary.clear(graphicsLibrary.COLOR_BUFFER_BIT | graphicsLibrary.DEPTH_BUFFER_BIT);
+    graphicsLibrary.drawArrays(graphicsLibrary.TRIANGLES, 0, vertices.length / 6);
+}
+
 function CreateGeometryBuffers(shaderProgram)
 {
     // Triangle  X    Y    Z    R    G    B
@@ -481,35 +523,33 @@ function CreateGeometryBuffers(shaderProgram)
     // Get shader uniform: Angle
     angleUniformLocation = graphicsLibrary.getUniformLocation(shaderProgram, 'Angle');
 
+    CreateTexture(shaderProgram, 'image/1812.jpg');
+
     // Activate shader program
     graphicsLibrary.useProgram(shaderProgram);
 
     // Display geometri on screen
+    //Render();
+
+    // Display Texture and light color on screen
+    Update();
+}
+
+function Update()
+{
+    // Show texture (boolean) last element
+    const textureElement = document.getElementById('t');
+    display[3] = textureElement.checked ? 1.0 : 0.0;
+
+    // Light color (convert hex to RGB)
+    const light = document.getElementById('l').value;
+    display[0] = parseInt(light.substring(1,3), 16) / 255.0;
+    display[1] = parseInt(light.substring(3,5), 16) / 255.0;
+    display[2] = parseInt(light.substring(5,7), 16) / 255.0;
+
+    // Update array to graphics card and render
+    graphicsLibrary.uniform4fv(displayUniformLocation, new Float32Array(display));
+
+    // Display geometri on screen
     Render();
-}
-
-function CreateVBO(ShaderProgram, vertices)
-{
-    let virtualBufferObject = graphicsLibrary.createBuffer();
-    graphicsLibrary.bindBuffer(graphicsLibrary.ARRAY_BUFFER, virtualBufferObject);
-    graphicsLibrary.bufferData(graphicsLibrary.ARRAY_BUFFER, vertices, graphicsLibrary.STATIC_DRAW);
-    const vertexPoints = 6 * Float32Array.BYTES_PER_ELEMENT;
-
-    // Create shader attribute: Pos
-    let position = graphicsLibrary.getAttribLocation(ShaderProgram, 'Pos');
-    graphicsLibrary.vertexAttribPointer(position, 3, graphicsLibrary.FLOAT, graphicsLibrary.FALSE, vertexPoints, 0);
-    graphicsLibrary.enableVertexAttribArray(position);
-
-    // Create shader attribute: Color
-    const offset = 3 * Float32Array.BYTES_PER_ELEMENT;
-    let color = graphicsLibrary.getAttribLocation(ShaderProgram, 'Color');
-    graphicsLibrary.vertexAttribPointer(color, 3, graphicsLibrary.FLOAT, graphicsLibrary.FALSE, vertexPoints, offset);
-    graphicsLibrary.enableVertexAttribArray(color);
-}
-
-function Render()
-{
-    graphicsLibrary.clearColor(0.0, 0.4, 0.6, 1.0);
-    graphicsLibrary.clear(graphicsLibrary.COLOR_BUFFER_BIT | graphicsLibrary.DEPTH_BUFFER_BIT);
-    graphicsLibrary.drawArrays(graphicsLibrary.TRIANGLES, 0, vertices.length / 6);
 }
