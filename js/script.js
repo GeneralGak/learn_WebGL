@@ -294,9 +294,9 @@ function AddDynamicCylinder(radius, height)
         let angle1 = Math.cos(i);
         let angle2 = Math.sin(i);
 
-        AddTriangle( 0.0, -h, 0.0, 0.0, 1.0, 1.0, 0.5, 1.0, 0.0, -1.0, 0.0,
-                    radius * angle1, -h, -radius * angle2, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0,
-                    radius * angle2, -h, -radius * angle1, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, -1.0, 0.0);
+        AddTriangle( 0.0, h, 0.0, 0.0, 1.0, 1.0, 0.5, 1.0, 0.0, -1.0, 0.0,
+                    radius * Math.cos(i / 180 * Math.PI), h, radius * Math.sin(i / 180 * Math.PI), 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0,
+                    radius * Math.cos((i + 10) / 180 * Math.PI), h, radius * Math.sin((i + 10) / 180 * Math.PI), 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, -1.0, 0.0);
     }
 }
 
