@@ -285,6 +285,21 @@ function AddDynamicTriangleBox(width, height, depth)
                 0.0,-h,-d, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, -1.0, 0.0);
 }
 
+function AddDynamicCylinder(radius, height)
+{
+    const h = height * 0.5;
+
+    for (let i = 0; i < 360; i += 10) 
+    {
+        let angle1 = Math.cos(i);
+        let angle2 = Math.sin(i);
+
+        AddTriangle( 0.0, -h, 0.0, 0.0, 1.0, 1.0, 0.5, 1.0, 0.0, -1.0, 0.0,
+                    radius * angle1, -h, -radius * angle2, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0,
+                    radius * angle2, -h, -radius * angle1, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, -1.0, 0.0);
+    }
+}
+
 function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, divideZ) 
 {
     divideX = Math.max(1, divideX);
@@ -464,7 +479,8 @@ function CreateGeometryUI() {
         case 1: AddDynamicQuad(width, height); break;
         case 2: AddDynamicQuadBox(width, height, depth); break;
         case 3: AddDynamicTriangleBox(width, height, depth); break;
-        case 4: AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, divideZ); break;
+        case 4: AddDynamicCylinder(width, height); break;
+        case 5: AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, divideZ); break;
     }
 }
 
