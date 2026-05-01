@@ -42,7 +42,7 @@
             gl_Position = matY * matX * vec4(Pos, 1.0);
             vertexColor = Color;
             uv = UV;
-            normal = mat3(matX * matY) * Normal;
+            normal = mat3(matY * matX) * Normal;
         }
     </textarea>
     <textarea id="fragmentShader" spellcheck="false">

@@ -332,10 +332,10 @@ function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, di
                     divW,         divH,         d, sideColor1, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
 
             // Back
-            AddQuad(divW,         divH,         -d, 0.0, sideColor1, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
-                    divW,         divH - stepY, -d, 0.0, sideColor1, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-                    divW - stepX, divH - stepY, -d, 0.0, sideColor1, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
-                    divW - stepX, divH,         -d, 0.0, sideColor1, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+            AddQuad(divW,         divH,         -d, 0.0, sideColor1, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0,
+                    divW,         divH - stepY, -d, 0.0, sideColor1, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0,
+                    divW - stepX, divH - stepY, -d, 0.0, sideColor1, 0.0, 1.0, 0.0, 0.0, 0.0, -1.0,
+                    divW - stepX, divH,         -d, 0.0, sideColor1, 0.0, 1.0, 1.0, 0.0, 0.0, -1.0);
 
             for (let q = 0; q < divideZ; q++)
             {
@@ -345,29 +345,29 @@ function AddDynamicSubdividedeQuadBox(width, height, depth, divideX, divideY, di
                 // Left
                 sideColor1 = (setBlackYZ ? 1.0 : 0.0);
                 sideColor2 = (setBlackYZ ? 0.5 : 0.0);
-                AddQuad(-w, divH,         divD,         sideColor1, sideColor2, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
-                        -w, divH,         divD - stepZ, sideColor1, sideColor2, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-                        -w, divH - stepY, divD - stepZ, sideColor1, sideColor2, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0,
-                        -w, divH - stepY, divD,         sideColor1, sideColor2, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0);
+                AddQuad(-w, divH,         divD,         sideColor1, sideColor2, 0.0, 0.0, 1.0, -1.0, 0.0, 0.0,
+                        -w, divH,         divD - stepZ, sideColor1, sideColor2, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0,
+                        -w, divH - stepY, divD - stepZ, sideColor1, sideColor2, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0,
+                        -w, divH - stepY, divD,         sideColor1, sideColor2, 0.0, 1.0, 1.0, -1.0, 0.0, 0.0);
 
                 // Right   
-                AddQuad(w, divH,         divD - stepZ,  sideColor2, 0.0, sideColor2, 0.0, 1.0, 0.0, 0.0, 1.0,
-                        w, divH,         divD,          sideColor2, 0.0, sideColor2, 0.0, 0.0, 0.0, 0.0, 1.0,
-                        w, divH - stepY, divD,          sideColor2, 0.0, sideColor2, 1.0, 0.0, 0.0, 0.0, 1.0,
-                        w, divH - stepY, divD - stepZ,  sideColor2, 0.0, sideColor2, 1.0, 1.0, 0.0, 0.0, 1.0); 
+                AddQuad(w, divH,         divD - stepZ,  sideColor2, 0.0, sideColor2, 0.0, 1.0, 1.0, 0.0, 0.0,
+                        w, divH,         divD,          sideColor2, 0.0, sideColor2, 0.0, 0.0, 1.0, 0.0, 0.0,
+                        w, divH - stepY, divD,          sideColor2, 0.0, sideColor2, 1.0, 0.0, 1.0, 0.0, 0.0,
+                        w, divH - stepY, divD - stepZ,  sideColor2, 0.0, sideColor2, 1.0, 1.0, 1.0, 0.0, 0.0); 
 
                 // Top
                 sideColor1 = (setBlackXZ ? 1.0 : 0.0);
-                AddQuad(divW - stepX, h, divD - stepZ,  0.0, 0.0, sideColor1, 0.0, 1.0, 0.0, 0.0, 1.0,
-                        divW - stepX, h, divD,          0.0, 0.0, sideColor1, 0.0, 0.0, 0.0, 0.0, 1.0,
-                        divW,         h, divD,          0.0, 0.0, sideColor1, 1.0, 0.0, 0.0, 0.0, 1.0,
-                        divW,         h, divD - stepZ,  0.0, 0.0, sideColor1, 1.0, 1.0, 0.0, 0.0, 1.0);
+                AddQuad(divW - stepX, h, divD - stepZ,  0.0, 0.0, sideColor1, 0.0, 1.0, 0.0, 1.0, 0.0,
+                        divW - stepX, h, divD,          0.0, 0.0, sideColor1, 0.0, 0.0, 0.0, 1.0, 0.0,
+                        divW,         h, divD,          0.0, 0.0, sideColor1, 1.0, 0.0, 0.0, 1.0, 0.0,
+                        divW,         h, divD - stepZ,  0.0, 0.0, sideColor1, 1.0, 1.0, 0.0, 1.0, 0.0);
 
                 // Bottom
-                AddQuad(divW - stepX, -h, divD,          0.0, sideColor1, sideColor1, 0.0, 1.0, 0.0, 0.0, 1.0,
-                        divW - stepX, -h, divD - stepZ,  0.0, sideColor1, sideColor1, 0.0, 0.0, 0.0, 0.0, 1.0,
-                        divW,         -h, divD - stepZ,  0.0, sideColor1, sideColor1, 1.0, 0.0, 0.0, 0.0, 1.0,
-                        divW,         -h, divD,          0.0, sideColor1, sideColor1, 1.0, 1.0, 0.0, 0.0, 1.0);
+                AddQuad(divW - stepX, -h, divD,          0.0, sideColor1, sideColor1, 0.0, 1.0, 0.0, -1.0, 0.0,
+                        divW - stepX, -h, divD - stepZ,  0.0, sideColor1, sideColor1, 0.0, 0.0, 0.0, -1.0, 0.0,
+                        divW,         -h, divD - stepZ,  0.0, sideColor1, sideColor1, 1.0, 0.0, 0.0, -1.0, 0.0,
+                        divW,         -h, divD,          0.0, sideColor1, sideColor1, 1.0, 1.0, 0.0, -1.0, 0.0);
             }
         }
     }
@@ -509,7 +509,7 @@ function CreateVBO(ShaderProgram, vertices)
     graphicsLibrary.enableVertexAttribArray(uv);
 
     // Create shader attribute: Normal
-    const offset3 = offset + 5 * Float32Array.BYTES_PER_ELEMENT;
+    const offset3 = offset2 + 2 * Float32Array.BYTES_PER_ELEMENT;
     let normal = graphicsLibrary.getAttribLocation(ShaderProgram, 'Normal');
     graphicsLibrary.vertexAttribPointer(normal, 3, graphicsLibrary.FLOAT, graphicsLibrary.FALSE, vertexPoints, offset3);
     graphicsLibrary.enableVertexAttribArray(normal);
