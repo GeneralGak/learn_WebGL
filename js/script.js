@@ -15,6 +15,20 @@ var textureUniformLocation = 0;
 var display = [ 0.0, 0.0, 0.0, 0.0 ];
 var displayUniformLocation = 0;
 
+var projectionUniformLocation = 0; // Uniform Location
+// Projection Matrix
+var projection = [ 0.0, 0.0, 0.0, 0.0,
+                   0.0, 0.0, 0.0, 0.0,
+                   0.0, 0.0, 0.0, 0.0,
+                   0.0, 0.0, 0.0, 0.0 ];
+var modelViewUniformLocation = 0; // Uniform Location
+// Model View Matrix
+var modelView = [ 1.0, 0.0, 0.0, 0.0,
+                  0.0, 1.0, 0.0, 0.0,
+                  0.0, 0.0, 1.0, 0.0,
+                  0.0, 0.0,-1.2, 1.0 ];
+
+
 
 
 document.getElementById('graphicsLibrary').addEventListener(
@@ -515,10 +529,38 @@ function CreateVBO(ShaderProgram, vertices)
     graphicsLibrary.enableVertexAttribArray(normal);
 }
 
+function Perspective(fovy, aspect, near, far)
+{
+    // Fill array with zeros
+    projection.fill(0);
+    // Focal length
+    const focalLength = Math.tan(fovy * Math.PI / 360.0);
+    // Setup matrix
+    projection[0] = focalLength / aspect;
+    projection[5] = focalLength;
+    projection[10] = (far + near) / (near - far);
+    projection[11] = (2 * far * near) / (near - far);
+    projection[14] = -1;
+
+    graphicsLibrary.uniformMatrix4fv(projectionUniformLocation, false, new Float32Array(projection));
+    graphicsLibrary.uniformMatrix4fv(modelViewUniformLocation, false, new Float32Array(modelView));
+}
+
 function Render()
 {
     graphicsLibrary.clearColor(0.0, 0.4, 0.6, 1.0);
     graphicsLibrary.clear(graphicsLibrary.COLOR_BUFFER_BIT | graphicsLibrary.DEPTH_BUFFER_BIT);
+    
+    // Dolly Zoom
+    const zoom = document.getElementById('zoom').value;
+    modelView[14] = -zoom;
+    
+    // Perspective Projection
+    const fov = document.getElementById('fov').value;
+    const aspect = graphicsLibrary.canvas.width / graphicsLibrary.canvas.height;
+    Perspective(fov, aspect, 1.0, 2000.0);
+    
+    // Draw Geometry
     graphicsLibrary.drawArrays(graphicsLibrary.TRIANGLES, 0, vertices.length / 6);
 }
 
@@ -538,6 +580,8 @@ function CreateGeometryBuffers(shaderProgram)
 
     // Get shader uniform: Angle
     angleUniformLocation = graphicsLibrary.getUniformLocation(shaderProgram, 'Angle');
+    projectionUniformLocation = graphicsLibrary.getUniformLocation(shaderProgram,'Projection');
+    modelViewUniformLocation = graphicsLibrary.getUniformLocation(shaderProgram,'ModelView');
 
     CreateTexture(shaderProgram, 'image/1812.jpg');
 
